@@ -1,44 +1,62 @@
 from colorama import *
 import psycopg2 as ps
 import os
-import streamlit as st
-import streamlit_pydantic as sp
-from pydantic import BaseModel
-from pydantic import Field
-class Platok_Schema(BaseModel):
-    id: int
-    Название_Платка: str = Field(min_length=5, max_length=50)
-    Автор_Платка: str = Field(min_length=5, max_length=50)
-    Колорит_1: str= Field(min_length=3, max_length=50)
-    Колорит_2: str= Field(min_length=3, max_length=50)
-    Колорит_3: str= Field(min_length=3, max_length=50)
-    Колорит_4: str= Field(min_length=3, max_length=50)
-    Колорит_5: str= Field(min_length=3, max_length=50)
-    Узор_Темени: str= Field(min_length=3, max_length=50)
-    Узор_Сердцевины: str= Field(min_length=3, max_length=50)
-    Узор_Сторон: str= Field(min_length=3, max_length=50)
-    Узор_Углов: str= Field(min_length=3, max_length=50)
-    Узор_Края: str= Field(min_length=3, max_length=50)
-    Цветы_Орнамент: str= Field(min_length=3, max_length=50)
-    Изображённый_Цветок_1: str= Field(min_length=3, max_length=50)
-    Изображённый_Цветок_2: str= Field(min_length=3, max_length=50)
-    Изображённый_Цветок_3: str= Field(min_length=3, max_length=50)
-    Изображённый_Цветок_4: str= Field(min_length=3, max_length=50)
-    Изображённый_Цветок_5: str= Field(min_length=3, max_length=50)
-    Размер_Платка: str= Field(min_length=3, max_length=50)
-    Материал_Платка: str= Field(min_length=3, max_length=50)
-    Материал_Бахромы: str= Field(min_length=3, max_length=50)
+from typing import Annotated
+#from pydantic import BaseModel
+#from pydantic import Field
+#class Platok_Schema(BaseModel):
+    #id: int
+    #Название_Платка: str = Field(min_length=5, max_length=50)
+    #Автор_Платка: str = Field(min_length=5, max_length=50)
+    #Колорит_1: str= Field(min_length=3, max_length=50)
+    #Колорит_2: str= Field(min_length=3, max_length=50)
+    #Колорит_3: str= Field(min_length=3, max_length=50)
+    #Колорит_4: str= Field(min_length=3, max_length=50)
+    #Колорит_5: str= Field(min_length=3, max_length=50)
+    #Узор_Темени: str= Field(min_length=3, max_length=50)
+    #Узор_Сердцевины: str= Field(min_length=3, max_length=50)
+    #Узор_Сторон: str= Field(min_length=3, max_length=50)
+    #Узор_Углов: str= Field(min_length=3, max_length=50)
+    #Узор_Края: str= Field(min_length=3, max_length=50)
+    #Цветы_Орнамент: str= Field(min_length=3, max_length=50)
+    #Изображённый_Цветок_1: str= Field(min_length=3, max_length=50)
+    #Изображённый_Цветок_2: str= Field(min_length=3, max_length=50)
+    #зображённый_Цветок_3: str= Field(min_length=3, max_length=50)
+    #Изображённый_Цветок_4: str= Field(min_length=3, max_length=50)
+    #Изображённый_Цветок_5: str= Field(min_length=3, max_length=50)
+    #Размер_Платка: str= Field(min_length=3, max_length=50)
+    #Материал_Платка: str= Field(min_length=3, max_length=50)
+    #Материал_Бахромы: str= Field(min_length=3, max_length=50)
 from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
-from streamlit import streamlit as st, chat_message
+from streamlit import streamlit as stml, chat_message
 #cmd='streamlit run main.py --server.port 1000'
-st.title('ДОБАВИТЬ ПЛАТОК')
-with st.form(key='platok_form'):
-    st.subheader('Введите данные по платку')
-    id=st.text_input
-data = sp.pydantic_form(key="Данные по платку", model=Platok_Schema)
-if data is not None:
-    print(data)
+stml.title('ДОБАВИТЬ ПЛАТОК')
+with stml.form(key='ДОБАВИТЬ ПЛАТОК'):
+    Название_Платка = stml.text_input(label='Название_Платка')
+    Автор_Платка = stml.text_input(label='Автор_Платка')
+    Колорит_1 = stml.text_input(label='Колорит_1')
+    Колорит_2 = stml.text_input(label='Колорит_2')
+    Колорит_3 = stml.text_input(label='Колорит_3')
+    Колорит_4 = stml.text_input(label='Колорит_4')
+    Колорит_5 = stml.text_input(label='Колорит_5')
+    Узор_Темени = stml.text_input(label='Узор_Темени')
+    Узор_Сердцевины = stml.text_input(label='Узор_Сердцевины')
+    Узор_Сторон = stml.text_input(label='Узор_Сторон')
+    Узор_Углов = stml.text_input(label='Узор_Углов')
+    Узор_Края = stml.text_input(label='Узор_Края')
+    Цветы_Орнамент = stml.text_input(label='Цветы_Орнамент')
+    Изображённый_Цветок_1 = stml.text_input(label='Изображённый_Цветок_1')
+    Изображённый_Цветок_2 = stml.text_input(label='Изображённый_Цветок_2')
+    Изображённый_Цветок_3 = stml.text_input(label='Изображённый_Цветок_3')
+    Изображённый_Цветок_4 = stml.text_input(label='Изображённый_Цветок_4')
+    Изображённый_Цветок_5 = stml.text_input(label='Изображённый_Цветок_5')
+    Размер_Платка = stml.text_input(label='Размер_Платка')
+    Материал_Платка = stml.text_input(label='Материал_Платка')
+    Материал_Бахромы = stml.text_input(label='Материал_Бахромы')
+    submit_button=stml.form_submit_button(label='Отправить')
+if submit_button:
+    print(Материал_Бахромы)
 if __name__ == '__main__':
     init(autoreset=True)
     from streamlit.runtime.scriptrunner import get_script_run_ctx
