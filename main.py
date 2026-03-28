@@ -147,7 +147,7 @@ async def registracija():
                     Материал_Бахромы=platok_kontrol.Материал_Бахромы)
                     session = session_factory()
                     session.add(platoch_eksemp)
-                    # await session.commit()
+                    await session.commit()
                     await session.close()
                     stml.toast(platok_kontrol)
                     stml.success('OK')
