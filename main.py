@@ -80,11 +80,8 @@ if submit_button:
     platok_vvod["Размер_Платка"] = Размер_Платка
     platok_vvod["Материал_Платка"] = Материал_Платка
     platok_vvod["Материал_Бахромы"] = Материал_Бахромы
-    try:
-        platok_kontrol=Platok_Schema(**platok_vvod)
-        stml.toast(platok_kontrol)
-    except ValidationError as e:
-        stml.warning("FAIL")
+    platok_kontrol=Platok_Schema(**platok_vvod)
+    stml.toast(platok_kontrol)
 if __name__ == '__main__':
     init(autoreset=True)
     from streamlit.runtime.scriptrunner import get_script_run_ctx
