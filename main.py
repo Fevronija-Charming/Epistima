@@ -118,15 +118,43 @@ async def registracija():
     session = session_factory()
     query = select(Platoky).where(Platoky.Название == Название_Платка)
     result = await session.execute(query)
+    await session.close()
     unikalnost_platka = result.scalar_one_or_none()
     if unikalnost_platka is None:
         session = session_factory()
         query2 = select(Platoky).where(Platoky.id == id)
         result2 = await session.execute(query2)
+        await session.close()
         unikalnost_id = result2.scalar_one_or_none()
         if unikalnost_id is None:
-            platok_kontrol = Platok_Schema(**platok_vvod)
-            stml.toast(platok_kontrol)
+            try:
+                platok_kontrol = Platok_Schema(**platok_vvod)
+                try:
+                    platoch_eksemp = Platoky(id=platok_kontrol.id,
+                    Название=platok_kontrol.Название_Платка,Автор=platok_kontrol.Автор_Платка,
+                    Колорит_1=platok_kontrol.Колорит_1, Колорит_2=platok_kontrol.Колорит_2,
+                    Колорит_3=platok_kontrol.Колорит_3, Колорит_4=platok_kontrol.Колорит_4,
+                    Колорит_5=platok_kontrol.Колорит_5, Узор_темени=platok_kontrol.Узор_Темени,
+                    Узор_сердцевины=platok_kontrol.Узор_Сердцевины, Узор_сторон=platok_kontrol.Узор_Сторон,
+                    Узор_углов=platok_kontrol.Узор_Углов, Узор_края=platok_kontrol.Узор_Края,
+                    Цветы_Орнамент=platok_kontrol.Цветы_Орнамент,
+                    Изображенный_Цветок_1=platok_kontrol.Изображённый_Цветок_1,
+                    Изображенный_Цветок_2=platok_kontrol.Изображённый_Цветок_2,
+                    Изображенный_Цветок_3=platok_kontrol.Изображённый_Цветок_3,
+                    Изображенный_Цветок_4=platok_kontrol.Изображённый_Цветок_4,
+                    Изображенный_Цветок_5=platok_kontrol.Изображённый_Цветок_5,
+                    Размер_Платка=platok_kontrol.Размер_Платка, Материал_Платка=platok_kontrol.Материал_Платка,
+                    Материал_Бахромы=platok_kontrol.Материал_Бахромы)
+                    session = session_factory()
+                    session.add(platoch_eksemp)
+                    # await session.commit()
+                    await session.close()
+                    stml.toast(platok_kontrol)
+                    stml.success('OK')
+                except:
+                    stml.warning('Проблема с БД')
+            except ValidationError:
+                stml.warning('Данные не прошли валидацию')
         else:
             stml.warning('id занят')
     else:
