@@ -33,7 +33,7 @@ from streamlit import streamlit as stml, chat_message
 #cmd='streamlit run main.py --server.port 1000'
 stml.title('ДОБАВИТЬ ПЛАТОК')
 with stml.form(key='ДОБАВИТЬ ПЛАТОК'):
-    id=stml.number_input(max_value=200, min_value=1)
+    id=stml.number_input(value=0,max_value=200, min_value=1)
     Название_Платка = stml.text_input(label='Название_Платка')
     Автор_Платка = stml.text_input(label='Автор_Платка')
     Колорит_1 = stml.text_input(label='Колорит_1')
