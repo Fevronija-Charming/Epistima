@@ -1,9 +1,44 @@
 from colorama import *
 import psycopg2 as ps
 import os
+import asyncio
 from typing import Annotated
 from pydantic import BaseModel, ValidationError
 from pydantic import Field
+#работа с базой данных
+from sqlalchemy import  DateTime, String, Float, Column, Integer, func,Text
+from sqlalchemy import  select
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from psycopg2.errors import *
+engine = create_async_engine(os.getenv("DBURL"),echo=True,max_overflow=5,pool_size=5)
+session_factory = async_sessionmaker(bind=engine,class_=AsyncSession,expire_on_commit=False,autoflush=True)
+class Base(DeclarativeBase):
+    pass
+class Platoky(Base):
+    __tablename__="ПППЛАТКИ"
+    id: Mapped[int]=mapped_column(primary_key=True, autoincrement=True, nullable=False)
+    Название: Mapped[str]=mapped_column(String(128), nullable=False)
+    Автор: Mapped[str]=mapped_column(String(128), nullable=False)
+    Колорит_1: Mapped[str]=mapped_column(String(128), nullable=False)
+    Колорит_2: Mapped[str] = mapped_column(String(128), nullable=False)
+    Колорит_3: Mapped[str] = mapped_column(String(128), nullable=False)
+    Колорит_4: Mapped[str] = mapped_column(String(128), nullable=False)
+    Колорит_5: Mapped[str] = mapped_column(String(128), nullable=False)
+    Узор_темени: Mapped[str] = mapped_column(String(128), nullable=False)
+    Узор_сердцевины: Mapped[str] = mapped_column(String(128), nullable=False)
+    Узор_сторон: Mapped[str] = mapped_column(String(128), nullable=False)
+    Узор_углов: Mapped[str] = mapped_column(String(128), nullable=False)
+    Узор_края: Mapped[str] = mapped_column(String(128), nullable=False)
+    Цветы_Орнамент: Mapped[str] = mapped_column(String(128), nullable=False)
+    Изображенный_Цветок_1: Mapped[str] = mapped_column(String(128), nullable=False)
+    Изображенный_Цветок_2: Mapped[str] = mapped_column(String(128), nullable=False)
+    Изображенный_Цветок_3: Mapped[str] = mapped_column(String(128), nullable=False)
+    Изображенный_Цветок_4: Mapped[str] = mapped_column(String(128), nullable=False)
+    Изображенный_Цветок_5: Mapped[str] = mapped_column(String(128), nullable=False)
+    Размер_Платка: Mapped[str]=mapped_column(String(128), nullable=False)
+    Материал_Платка: Mapped[str]=mapped_column(String(128), nullable=False)
+    Материал_Бахромы: Mapped[str]=mapped_column(String(128), nullable=False)
 class Platok_Schema(BaseModel):
     id: int
     Название_Платка: str = Field(min_length=5, max_length=50)
@@ -56,7 +91,7 @@ with stml.form(key='ДОБАВИТЬ ПЛАТОК'):
     Материал_Платка = stml.text_input(label='Материал_Платка')
     Материал_Бахромы = stml.text_input(label='Материал_Бахромы')
     submit_button=stml.form_submit_button(label='Отправить')
-if submit_button:
+async def registracija():
     platok_vvod={}
     platok_vvod["id"] = id
     platok_vvod["Название_Платка"]=Название_Платка
@@ -80,16 +115,36 @@ if submit_button:
     platok_vvod["Размер_Платка"] = Размер_Платка
     platok_vvod["Материал_Платка"] = Материал_Платка
     platok_vvod["Материал_Бахромы"] = Материал_Бахромы
-    platok_kontrol=Platok_Schema(**platok_vvod)
-    stml.toast(platok_kontrol)
+    session = session_factory()
+    query = select(Platoky).where(Platoky.Название == Название_Платка)
+    result = await session.execute(query)
+    unikalnost_platka = result.scalar_one_or_none()
+    if unikalnost_platka is None:
+        session = session_factory()
+        query2 = select(Platoky).where(Platoky.id == id)
+        result2 = await session.execute(query2)
+        unikalnost_id = result2.scalar_one_or_none()
+        if unikalnost_id is None:
+            platok_kontrol = Platok_Schema(**platok_vvod)
+            stml.toast(platok_kontrol)
+        else:
+            stml.warning('id занят')
+    else:
+        stml.warning('Этот платок уже записан')
+
+if submit_button:
+    asyncio.run(registracija())
+def main():
+    pass
 if __name__ == '__main__':
+    main()
     init(autoreset=True)
-    from streamlit.runtime.scriptrunner import get_script_run_ctx
-    if get_script_run_ctx() is None:
-        from streamlit.web.cli import main
-        import sys
-        sys.argv=['streamlit', 'run', 'main.py','--server.port=1000']
-        main()
+    #from streamlit.runtime.scriptrunner import get_script_run_ctx
+    #if get_script_run_ctx() is None:
+    #from streamlit.web.cli import main
+    #import sys
+    #sys.argv=['streamlit', 'run', 'main.py','--server.port=1000']
+    #main()
 #создать ДБparol=''
 #Uspech481516232Uspech
 #heroku addons:attach --app sekleteja dd1j1646963s9k
