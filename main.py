@@ -3,11 +3,13 @@ import psycopg2 as ps
 import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
+from faststream.annotations import FastStream
 load_dotenv(find_dotenv())
 from typing import Annotated
 #брокер
 from faststream.rabbit import RabbitBroker,RabbitMessage
 broker=RabbitBroker(url=os.getenv("CLOUDAMQP_URL"))
+app=FastStream(broker)
 @broker.publisher(queue='PLATOKY')
 @broker.subscriber(queue='PLATOKY')
 async def exchanger(msg: RabbitMessage) -> None:
