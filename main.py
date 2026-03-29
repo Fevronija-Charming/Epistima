@@ -175,7 +175,7 @@ async def registracija():
                 await session.close()
                 stml.toast(platok_kontrol)
                 stml.success('OK')
-                await broker.publish(message=f"{platok_kontrol}", queue="UROKI")
+                await broker.publish(message=f"{platok_kontrol}", queue="PLATOKY")
                         #except:
                     #stml.warning('Проблема с БД')
                     #except ValidationError:
