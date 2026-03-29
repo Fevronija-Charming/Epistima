@@ -170,7 +170,11 @@ async def registracija():
                     await session.close()
                     stml.toast(platok_kontrol)
                     stml.success('OK')
-                    await send_platok(platok_kontrol)
+                    async with get_connection() as connection:
+                        async with connection.channel() as channel:
+                            channel.queue_declare(queue='PLATOKY', durable=True)
+                            channel.basic_publish(exchange='', routing_key='PLATOKY', body=platok_kontrol)
+                            channel.close()
                 except:
                     stml.warning('Проблема с БД')
             except ValidationError:
