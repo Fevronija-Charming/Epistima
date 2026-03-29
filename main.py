@@ -171,8 +171,8 @@ async def registracija():
                 stml.success('OK')
                 with get_connection() as connection:
                     with connection.channel() as channel:
-                        channel.queue_declare(queue='PLATOKY')
-                        channel.basic_publish(exchange='',routing_key='PLATOKY', body='PLATOKY')
+                        channel.queue_declare(queue='PLATOKY2')
+                        channel.basic_publish(exchange='',routing_key='PLATOKY2', body='PLATOKY2')
                         channel.close()
                         #except:
                     #stml.warning('Проблема с БД')
