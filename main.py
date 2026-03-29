@@ -2,7 +2,20 @@ from colorama import *
 import psycopg2 as ps
 import os
 import asyncio
+from dotenv import find_dotenv, load_dotenv
+load_dotenv(find_dotenv())
 from typing import Annotated
+#брокер
+import pika
+Rabbit_Host=os.getenv("AMQP_LINK")
+Rabbit_Port=os.getenv("AMQP_PORT")
+Rabbit_User=os.getenv("AMQP_USER")
+Rabbit_Password=os.getenv("AMQP_PASSWORD")
+connection_params = pika.ConnectionParameters(host=Rabbit_Host,port=Rabbit_Port,
+credentials=pika.PlainCredentials(Rabbit_User,Rabbit_Password))
+def get_connection():
+    return pika.BlockingConnection(parameters=connection_params)
+#валидация
 from pydantic import BaseModel, ValidationError
 from pydantic import Field
 #работа с базой данных
@@ -62,6 +75,12 @@ class Platok_Schema(BaseModel):
     Размер_Платка: str= Field(min_length=3, max_length=50)
     Материал_Платка: str= Field(min_length=3, max_length=50)
     Материал_Бахромы: str= Field(min_length=3, max_length=50)
+async def send_platok(platok_kontrol: BaseModel):
+    async with get_connection() as connection:
+        async with connection.channel() as channel:
+            channel.queue_declare(queue='PLATOKY', durable=True)
+            channel.basic_publish(exchange='', routing_key='PLATOKY',body=platok_kontrol)
+            channel.close()
 from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 from streamlit import streamlit as stml, chat_message
@@ -150,6 +169,7 @@ async def registracija():
                     await session.commit()
                     await session.close()
                     stml.toast(platok_kontrol)
+                    asyncio.run(send_platok(platok_kontrol))
                     stml.success('OK')
                 except:
                     stml.warning('Проблема с БД')
