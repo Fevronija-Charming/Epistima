@@ -9,7 +9,7 @@ from typing import Annotated
 #брокер
 from faststream.rabbit import RabbitBroker,RabbitMessage
 broker=RabbitBroker(url=os.getenv("CLOUDAMQP_URL"))
-app=FastStream(broker)
+#app=FastStream(broker)
 @broker.publisher(queue='PLATOKY')
 @broker.subscriber(queue='PLATOKY')
 async def exchanger(msg: RabbitMessage) -> None:
@@ -177,7 +177,8 @@ async def registracija():
                 await session.close()
                 stml.toast(platok_kontrol)
                 stml.success('OK')
-                await broker.publish(message=f"{platok_kontrol}", queue="PLATOKY")
+                async with broker:
+                    await broker.publish(message=f"{platok_kontrol}", queue="PLATOKY")
                         #except:
                     #stml.warning('Проблема с БД')
                     #except ValidationError:
