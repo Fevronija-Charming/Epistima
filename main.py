@@ -171,7 +171,7 @@ async def registracija():
                 stml.success('OK')
                 with get_connection() as connection:
                     with connection.channel() as channel:
-                        channel.queue_declare(queue='PLATOKY', durable=True)
+                        channel.queue_declare(queue='PLATOKY', durable=False)
                         channel.basic_publish(exchange='', routing_key='PLATOKY', body=platok_kontrol)
                         channel.close()
                         #except:
