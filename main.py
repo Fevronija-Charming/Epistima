@@ -77,8 +77,8 @@ class Platok_Schema(BaseModel):
 async def send_platok(platok_kontrol: BaseModel):
     async with get_connection() as connection:
         async with connection.channel() as channel:
-            channel.queue_declare(queue='PLATOKY', durable=True)
-            channel.basic_publish(exchange='', routing_key='PLATOKY',body=platok_kontrol)
+            channel.queue_declare(queue='PLATOKY2', durable=True)
+            channel.basic_publish(exchange='', routing_key='PLATOKY2',body=platok_kontrol)
             channel.close()
 from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
