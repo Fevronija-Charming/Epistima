@@ -167,10 +167,13 @@ async def registracija():
                     session = session_factory()
                     session.add(platoch_eksemp)
                     await session.commit()
-                    await session.close()
+                    #await session.close()
                     stml.toast(platok_kontrol)
-                    asyncio.run(send_platok(platok_kontrol))
                     stml.success('OK')
+                    try:
+                        await send_platok(platok_kontrol)
+                    except:
+                        stml.warning('Проблема с брокером')
                 except:
                     stml.warning('Проблема с БД')
             except ValidationError:
