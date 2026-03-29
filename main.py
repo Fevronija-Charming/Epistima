@@ -8,7 +8,7 @@ load_dotenv(find_dotenv())
 from typing import Annotated
 #брокер
 from faststream.rabbit import RabbitBroker,RabbitMessage
-broker=RabbitBroker(url=os.getenv("CLOUDAMQP_URL"))
+broker=RabbitBroker(url=os.getenv("AMQP_LINK"))
 #app=FastStream(broker)
 @broker.publisher(queue='PLATOKY')
 @broker.subscriber(queue='PLATOKY')
