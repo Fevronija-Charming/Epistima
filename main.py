@@ -6,6 +6,12 @@ from dotenv import find_dotenv, load_dotenv
 load_dotenv(find_dotenv())
 from typing import Annotated
 #брокер
+from faststream.rabbit import RabbitBroker,RabbitMessage
+broker=RabbitBroker(url=os.getenv("CLOUDAMQP_URL"))
+@broker.publisher(queue='PLATOKY')
+@broker.subscriber(queue='PLATOKY')
+async def exchanger(msg: RabbitMessage) -> None:
+    await msg.ack()
 import pika
 Rabbit_Host=os.getenv("AMQP_LINK")
 Rabbit_Port=os.getenv("AMQP_PORT")
@@ -169,11 +175,7 @@ async def registracija():
                 await session.close()
                 stml.toast(platok_kontrol)
                 stml.success('OK')
-                with get_connection() as connection:
-                    with connection.channel() as channel:
-                        channel.queue_declare(queue='PLATOKY2')
-                        channel.basic_publish(exchange='',routing_key='PLATOKY2', body='PLATOKY2')
-                        channel.close()
+                await broker.publish(message=f"{platok_kontrol}", queue="UROKI")
                         #except:
                     #stml.warning('Проблема с БД')
                     #except ValidationError:
