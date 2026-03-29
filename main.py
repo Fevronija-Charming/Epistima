@@ -11,8 +11,7 @@ Rabbit_Host=os.getenv("AMQP_LINK")
 Rabbit_Port=os.getenv("AMQP_PORT")
 Rabbit_User=os.getenv("AMQP_USER")
 Rabbit_Password=os.getenv("AMQP_PASSWORD")
-connection_params = pika.ConnectionParameters(host=Rabbit_Host,port=Rabbit_Port,
-credentials=pika.PlainCredentials(Rabbit_User,Rabbit_Password))
+connection_params = pika.URLParameters(Rabbit_Host)
 def get_connection():
     return pika.BlockingConnection(parameters=connection_params)
 #валидация
