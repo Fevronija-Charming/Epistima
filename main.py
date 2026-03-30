@@ -134,7 +134,7 @@ with stml.form(key='ДОБАВИТЬ ПЛАТОК'):
     Материал_Платка = stml.text_input(label='Материал_Платка')
     Материал_Бахромы = stml.text_input(label='Материал_Бахромы')
     submit_button=stml.form_submit_button(label='Отправить')
-async def registracija():
+async def registracija(background_task: BackgroundTasks):
     platok_vvod={}
     platok_vvod["id"] = id
     platok_vvod["Название_Платка"]=Название_Платка
@@ -214,8 +214,7 @@ async def registracija():
                                 for i in range(len(svedenija_platok)):
                                     soobshenije = soobshenije + platok_predstav[i] + peremycka1 + svedenija_platok[i] + peremycka2
                                 recipient = os.getenv("RECIPIENT1")
-                                background_task=BackgroundTasks()
-                                background_task.add_task(send_email_async, "Добавлен новый проект", recipient, soobshenije)
+                                background_task.add_task(send_email_async, "Добавлен новый платок", recipient, soobshenije)
                                 stml.success('OK')
                         except: stml.warning('Проблема с почтой')
                     except: stml.warning('Проблема с брокером')
@@ -227,7 +226,8 @@ async def registracija():
         stml.warning('Этот платок уже записан')
 
 if submit_button:
-    asyncio.run(registracija())
+    background_task = BackgroundTasks()
+    asyncio.run(registracija(background_task))
 def main():
     pass
 if __name__ == '__main__':
