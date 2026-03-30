@@ -190,7 +190,7 @@ async def registracija(background_task: BackgroundTasks):
                     Материал_Бахромы=platok_kontrol.Материал_Бахромы)
                     session = session_factory()
                     session.add(platoch_eksemp)
-                    #await session.commit()
+                    await session.commit()
                     await session.close()
                     stml.toast(platok_kontrol)
                     try:
