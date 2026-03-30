@@ -196,7 +196,7 @@ async def registracija():
                     try:
                         async with broker:
                             await broker.publish(message=f"{platok_kontrol}", queue="PLATOKY")
-                            try:
+                        try:
                                 platok_predstav = ["id:", "Название платка:", "Автор платка:", "Вариант окраски 1:",
                                 "Вариант окраски 2:", "Вариант окраски 3", "Вариант окраски 4:", "Вариант окраски 5:",
                                 "Узор темени:", "Узор сердцевины:", "Узор сторон:", "Узор углов:", "Узор края:",
@@ -216,7 +216,8 @@ async def registracija():
                                 recipient = os.getenv("RECIPIENT1")
                                 background_task=BackgroundTasks()
                                 background_task.add_task(send_email_async, "Добавлен новый проект", recipient, soobshenije)
-                            except: stml.warning('Проблема с почтой')
+                                stml.success('OK')
+                        except: stml.warning('Проблема с почтой')
                     except: stml.warning('Проблема с брокером')
                 except: stml.warning('Проблема с БД')
             except ValidationError: stml.warning('Данные не прошли валидацию')
