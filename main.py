@@ -22,6 +22,23 @@ Rabbit_Password=os.getenv("AMQP_PASSWORD")
 connection_params = pika.URLParameters(Rabbit_Host)
 def get_connection():
     return pika.BlockingConnection(parameters=connection_params)
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+from pydantic import EmailStr,BaseModel
+from typing import List
+configuracija_pochty=ConnectionConfig(MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+                                      MAIL_FROM=os.getenv("MAIL_FROM"),
+                                      MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+                                      MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
+MAIL_PORT=os.getenv("MAIL_PORT"),MAIL_SERVER=os.getenv("MAIL_SERVER"),MAIL_STARTTLS=os.getenv("MAIL_STARTTLS"),
+MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS"),USE_CREDENTIALS=os.getenv("USE_CREDENTIALS"))
+#фоновая задача
+from fastapi import BackgroundTasks
+async def send_email_async(subject: str, recipients:str, body:str):
+    recipient_list = []
+    recipient_list.append(recipients)
+    message=MessageSchema(subject=subject,recipients=recipient_list,body=body,subtype=MessageType.plain)
+    fast_mail = FastMail(configuracija_pochty)
+    await fast_mail.send_message(message)
 #валидация
 from pydantic import BaseModel, ValidationError
 from pydantic import Field
@@ -173,12 +190,33 @@ async def registracija():
                     Материал_Бахромы=platok_kontrol.Материал_Бахромы)
                     session = session_factory()
                     session.add(platoch_eksemp)
-                    await session.commit()
+                    #await session.commit()
                     await session.close()
                     stml.toast(platok_kontrol)
                     try:
                         async with broker:
                             await broker.publish(message=f"{platok_kontrol}", queue="PLATOKY")
+                            try:
+                                platok_predstav = ["id:", "Название платка:", "Автор платка:", "Вариант окраски 1:",
+                                "Вариант окраски 2:", "Вариант окраски 3", "Вариант окраски 4:", "Вариант окраски 5:",
+                                "Узор темени:", "Узор сердцевины:", "Узор сторон:", "Узор углов:", "Узор края:",
+                                "Соотношение цветов и узора:", "Нарисованный цветок 1:", "Нарисованный цветок 2:",
+                                "Нарисованный цветок 3:", "Нарисованный цветок 4:", "Нарисованный цветок 5:",
+                                "Размер платка:", "Материал платка:", "Материал бахромы:"]
+                                svedenija_platok = [str(id), Название_Платка, Автор_Платка, Колорит_1, Колорит_2,
+                                Колорит_3, Колорит_4, Колорит_5, Узор_Темени, Узор_Сердцевины, Узор_Сторон, Узор_Углов,
+                                Узор_Края, Цветы_Орнамент, Изображённый_Цветок_1, Изображённый_Цветок_2,
+                                Изображённый_Цветок_3, Изображённый_Цветок_4, Изображённый_Цветок_5,Размер_Платка,
+                                Материал_Платка,Материал_Бахромы]
+                                peremycka1 = " -> "
+                                peremycka2 = "; "
+                                soobshenije = ""
+                                for i in range(len(svedenija_platok)):
+                                    soobshenije = soobshenije + platok_predstav[i] + peremycka1 + svedenija_platok[i] + peremycka2
+                                recipient = os.getenv("RECIPIENT1")
+                                background_task=BackgroundTasks()
+                                background_task.add_task(send_email_async, "Добавлен новый проект", recipient, soobshenije)
+                            except: stml.warning('Проблема с почтой')
                     except: stml.warning('Проблема с брокером')
                 except: stml.warning('Проблема с БД')
             except ValidationError: stml.warning('Данные не прошли валидацию')
