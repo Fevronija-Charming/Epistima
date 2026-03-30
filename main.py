@@ -214,7 +214,14 @@ async def registracija(background_task: BackgroundTasks):
                                 for i in range(len(svedenija_platok)):
                                     soobshenije = soobshenije + platok_predstav[i] + peremycka1 + svedenija_platok[i] + peremycka2
                                 recipient = os.getenv("RECIPIENT1")
+                                subject = "Добавлен новый платок"
                                 background_task.add_task(send_email_async, "Добавлен новый платок", recipient, soobshenije)
+                                recipient_list = []
+                                recipient_list.append(recipient)
+                                message = MessageSchema(subject=subject, recipients=recipient_list, body=soobshenije,
+                                                        subtype=MessageType.plain)
+                                fast_mail = FastMail(configuracija_pochty)
+                                await fast_mail.send_message(message)
                                 stml.success('OK')
                         except: stml.warning('Проблема с почтой')
                     except: stml.warning('Проблема с брокером')
